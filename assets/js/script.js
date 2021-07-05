@@ -7,10 +7,20 @@ var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 
 //define this b4 event listener bc it wont know about this funciton otherwise
-var createTaskHandler = function(event){
+var taskFormHandler = function(event){
     event.preventDefault();
     var taskNameInput = document.querySelector("input[name = 'task-name']").value; //use [] to select attribute of an html element
     var taskTypeInput = document.querySelector("select[name = 'task-type']").value;
+    //package up data as an object
+    var taskDataObj = {
+        name: taskNameInput,
+        type: taskTypeInput
+    };
+    //send to createTaskEl
+    createTaskEl(taskDataObj);
+};
+//
+var createTaskEl = function(taskDataObj){
     //create list item
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
@@ -19,12 +29,10 @@ var createTaskHandler = function(event){
     //give it a class name
     taskInfoEl.className = "task-info";
     //add HTML contents to div
-    taskInfoEl.innerHTML ="<h3 class = 'task-name'>" + taskNameInput + "</h3><span class = 'task-type'>" + taskTypeInput + "</span>";
+    taskInfoEl.innerHTML ="<h3 class = 'task-name'>" + taskDataObj.name + "</h3><span class = 'task-type'>" + taskDataObj.type + "</span>";
     listItemEl.appendChild(taskInfoEl);
     //add entie list item to list
     tasksToDoEl.appendChild(listItemEl);
-    console.dir(listItemEl);
-};
-
+}
 //dynamically create li elements in the DOM
-formEl.addEventListener("submit", createTaskHandler);//listedn for an instance of clicking submit or pressing the enter key
+formEl.addEventListener("submit", taskFormHandler);//listedn for an instance of clicking submit or pressing the enter key
