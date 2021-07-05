@@ -12,12 +12,18 @@ var taskFormHandler = function(event){
     var taskNameInput = document.querySelector("input[name = 'task-name']").value; //use [] to select attribute of an html element
     var taskTypeInput = document.querySelector("select[name = 'task-type']").value;
     //package up data as an object
+    //check if input is empty string
+    if(!taskNameInput || !taskTypeInput){
+        alert("You need to fill ou the task form.");
+        return false;
+    }
     var taskDataObj = {
         name: taskNameInput,
         type: taskTypeInput
     };
     //send to createTaskEl
     createTaskEl(taskDataObj);
+    formEl.reset();
 };
 //
 var createTaskEl = function(taskDataObj){
