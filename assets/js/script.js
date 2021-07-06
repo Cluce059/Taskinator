@@ -1,3 +1,4 @@
+var taskIdCounter = 0;
 //How to select an element in Document Object Model:
 //var buttonEl = document.querySelector("#save-task");
 //console.log(buttonEl);
@@ -14,7 +15,7 @@ var taskFormHandler = function(event){
     //package up data as an object
     //check if input is empty string
     if(!taskNameInput || !taskTypeInput){
-        alert("You need to fill out the task form.");
+        alert("You need to fill ou the task form.");
         return false;
     }
     var taskDataObj = {
@@ -39,6 +40,10 @@ var createTaskEl = function(taskDataObj){
     listItemEl.appendChild(taskInfoEl);
     //add entie list item to list
     tasksToDoEl.appendChild(listItemEl);
-}
+};
+var createTaskActions =  function(taskId){
+
+};
 //dynamically create li elements in the DOM
 formEl.addEventListener("submit", taskFormHandler);//listedn for an instance of clicking submit or pressing the enter key
+//at 4.3.6 
