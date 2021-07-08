@@ -1,3 +1,5 @@
+var tasksInProgressEl = document.querySelector("#tasks-in-progress");
+var tasksCompletedEl = document.querySelector("#tasks-completed");
 var taskIdCounter = 0;
 var pageContentEl = document.querySelector("#page-content");//selecting <main> by its id
 
@@ -20,15 +22,38 @@ var taskFormHandler = function(event){
         alert("You need to fill ou the task form.");
         return false;
     }
-    var taskDataObj = {
-        name: taskNameInput,
-        type: taskTypeInput
-    };
-    //send to createTaskEl
-    createTaskEl(taskDataObj);
+    var isEdit = formEl.hasAttribute("data-task-id");
+    //if has data attribute get its taskId an cal edit to complete edit process
+    
+    if(isEdit){
+        //only called if isEdit is true
+        var taskId = formEl.getAttribute("data-task-id");
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
+    }
+    //if no data attribute, create object as usual and pass tp createTaskEl
+    else{
+        var taskDataObj = {
+            name: taskNameInput,
+            type: taskTypeInput
+        };
+        createTaskEl(taskDataObj);
+    }
+    
     formEl.reset();
 };
-//
+
+var completeEditTask = function(taskName, taskType, taskId){
+    //find matching li item
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    //set new values after edit
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+    taskSelected.querySelector("span.task-type").textContent = taskType;
+    alert("Task Updated");
+    //reset form  by removing taskId and changing button to normal
+    formEl.removeAttribute("data-task-id");
+    document.querySelector("#save-task").textContent = "Add Task";
+};
+
 var createTaskEl = function(taskDataObj){
     //create list item
     var listItemEl = document.createElement("li");
@@ -106,7 +131,7 @@ var taskButtonHandler = function(event){
 
     //if edit is clicked:
     if(targetEl.matches(".edit-btn")){
-        var taskId = targetEl.getAttribute("data-task-id");
+        var taskId = targetEl.getAttribute("data-task-id"); //yanno onlyt new tasks have this attribute..ofc there are only new tasks sooo...
         editTask(taskId);
     }
     //if delete is clicked
@@ -115,6 +140,7 @@ var taskButtonHandler = function(event){
         deleteTask(taskId);
     }
 };
+
 
 //select li item by searching for a .task-item with a task-item-id equal to the taskId passed into the funciton
 var deleteTask = function(taskId) {
@@ -133,13 +159,31 @@ var editTask = function(taskId) {
     document.querySelector("#save-task").textContent = "Save task";
     //to amek sure that taskId is preserved in some way so devs have a way to access it
     formEl.setAttribute("data-task-id", taskId);
-    
-
 };
 
+var taskStatusChangeHandler =  function(event){
+    //  console.log(event.target);
+    //console.log(event.target.getAttribute("data-task-id"));
+    var taskId = event.target.getAttribute("data-task-id");
+    //get the selected optoins value and convert to lowercase
+    var statusValue = event.target.value.toLowerCase();
+    //select parent task item based on id..use lowercase version for checking 
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']"); //TODO!!!!!!code doesnt like this for some reason bc it isnt defiend prolly
+    if(statusValue === "to do"){
+        //this appendChild doesnt create a copy but instead moves the task item from original DOM location to the end of the ul element
+        //is a reference to a DOM el
+        tasksToDoEl.appendChild(taskSelected); //askstoDo and etc are references to ul elements 
+    }
+    else if(statusValue === "in progress"){
+        tasksInProgressEl.appendChild(taskSelected);
+    }
+    else if(statusValue === "completed"){
+        tasksCompletedEl.appendChild(taskSelected);
+    }
+};
 
 pageContentEl.addEventListener("click", taskButtonHandler);
-
+pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
 
 
