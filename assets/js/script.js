@@ -57,7 +57,7 @@ var completeEditTask = function(taskName, taskType, taskId){
             tasks[i].type = taskType;
         }
     };
-
+    saveTasks();
     alert("Task Updated");
     //reset form  by removing taskId and changing button to normal
     formEl.removeAttribute("data-task-id");
@@ -66,8 +66,8 @@ var completeEditTask = function(taskName, taskType, taskId){
 };
 
 var createTaskEl = function(taskDataObj){
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
+    //console.log(taskDataObj);
+    //console.log(taskDataObj.status);
     //create list item
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
@@ -84,7 +84,7 @@ var createTaskEl = function(taskDataObj){
 
     taskDataObj.id = taskIdCounter;//assign the counter as id to the task item
     tasks.push(taskDataObj);//pushes to tasks array to sync localstorage w gui/dom data
-    
+    saveTasks();
     //add entie list item to list
     var taskActionsEl = createTaskActions(taskIdCounter); 
     //^counter is an argument to make buttons cooresponding to the task Id...createTaskActiosn returns a DOM element and is stored here in taskActionsEl to make it tangible
@@ -172,7 +172,9 @@ var deleteTask = function(taskId) {
         }
     }
     tasks = updatedTaskArr;
+    saveTasks();
   };
+
 var editTask = function(taskId) {
     // get task li element
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -213,6 +215,11 @@ var taskStatusChangeHandler =  function(event){
         }
         //console.log(tasks);
     }
+    saveTasks();
+};
+
+var saveTasks = function(){
+    localStorage.setItem("tasks", JSON.stringify(tasks));//JS Onject Notation
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
