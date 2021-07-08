@@ -62,7 +62,6 @@ var completeEditTask = function(taskName, taskType, taskId){
     //reset form  by removing taskId and changing button to normal
     formEl.removeAttribute("data-task-id");
     document.querySelector("#save-task").textContent = "Add Task";
-
 };
 
 var createTaskEl = function(taskDataObj){
@@ -83,9 +82,9 @@ var createTaskEl = function(taskDataObj){
     listItemEl.appendChild(taskInfoEl);
 
     taskDataObj.id = taskIdCounter;//assign the counter as id to the task item
-    tasks.push(taskDataObj);//pushes to tasks array to sync localstorage w gui/dom data
+    tasks.push(taskDataObj); //pushes to tasks array to sync localstorage w gui/dom data
     saveTasks();
-    //add entie list item to list
+    //add entire list item to list
     var taskActionsEl = createTaskActions(taskIdCounter); 
     //^counter is an argument to make buttons cooresponding to the task Id...createTaskActiosn returns a DOM element and is stored here in taskActionsEl to make it tangible
     //console.log(taskActionsEl); // good way to test if input is being logged
@@ -221,6 +220,60 @@ var taskStatusChangeHandler =  function(event){
 var saveTasks = function(){
     localStorage.setItem("tasks", JSON.stringify(tasks));//JS Onject Notation
 };
+
+var loadTasks = function(){
+    //getitem from local storage
+    tasks = localStorage.getItem("tasks");
+    
+    if(tasks === null){
+        tasks = [];
+        return false;
+    }
+    console.log(tasks);
+    tasks = JSON.parse(tasks);//set str data back to arr data but what about the id?
+    console.log(tasks);
+    //convert from str to array obj
+    
+    for(var i = 0; i < tasks.length; i++){
+        tasks[i].id = taskIdCounter;
+        var listItemEl = document.createElement("li");
+        listItemEl.className = "task-item";
+        listItemEl.setAttribute("data-task-id", tasks[i].id);
+        listItemEl.setAttribute("draggable", true);
+        //console.log(listItemEl);
+        var taskInfoEl = document.createElement("div");
+        taskInfoEl.className = "task-info";
+        taskInfoEl.innerHTML = "<h3 class = 'task-name'>" + tasks[i].name + "</h3><span class = 'task-type'>" + tasks[i].type + "</span>";
+        listItemEl.appendChild(taskInfoEl);
+        var taskActionsEl = createTaskActions(tasks[i].id);
+        listItemEl.appendChild(taskActionsEl);
+        
+        
+
+        if(tasks[i].status === "to do"){
+            listItemEl.querySelector("select[name='status-change']").selectedIndex;
+            tasksToDoEl.appendChild(listItemEl);
+        }
+        else if(tasks[i].status === "in progress"){
+            listItemEl.querySelector("select[name='status-change']").selectedIndex;
+            tasksInProgressEl.appendChild(listItemEl);
+        }
+        else if(tasks[i].status === "complete"){
+            listItemEl.querySelector("select[name='status-change']").selectedIndex;
+            tasksCompletedEl.appendChild(listItemEl);
+        }
+        taskIdCounter ++;
+        console.log(listItemEl);
+    }
+
+    //create div to hold task info and add to list item
+    // //give it a class name
+    // taskInfoEl.className = "task-info";
+    // //add HTML contents to div
+    // taskInfoEl.innerHTML ="<h3 class = 'task-name'>" + taskDataObj.name + "</h3><span class = 'task-type'>" + taskDataObj.type + "</span>";
+    // listItemEl.appendChild(taskInfoEl);
+};
+loadTasks();
 
 pageContentEl.addEventListener("click", taskButtonHandler);
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
